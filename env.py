@@ -4,35 +4,34 @@ class Env:
     tests at bottom of module for examples.
     """
 
-    def __init__(self, parent=None, local=None):
+    def __init__(self, parent=None, locals_=None):
         self.parent = parent if parent is not None else EmptyDict()
-        self.local = local if local is not None else dict()
+        self.locals = locals_ if locals_ is not None else dict()
 
     def __getitem__(self, name):
-        val = self.local.get(name)
-        if val:
-            return val
+        if name in self.locals.keys():
+            return self.locals[name]
         else:
             return self.parent[name]
 
     def declare(self, name):
-        self.local[name] = None
+        self.locals[name] = None
 
     def declare_all(self, *names):
-        self.local.update((name, None) for name in names)
+        self.locals.update((name, None) for name in names)
 
     def __setitem__(self, name, value):
-        if name in self.local:
-            self.local[name] = value
+        if name in self.locals:
+            self.locals[name] = value
         else:
             self.parent[name] = value
 
     def __contains__(self, name):
-        return name in self.local or name in self.parent
+        return name in self.locals or name in self.parent
 
     def __repr__(self):
         fmt = "Env(parent: {}, local: {})"
-        return fmt.format(self.parent, self.local)
+        return fmt.format(self.parent, self.locals)
 
 
 class EmptyDict:

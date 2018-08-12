@@ -5,11 +5,12 @@ import argparse as ap
 from parser import Parser
 from lexer import Lexer
 import AST
+import prelude
 
 parser = Parser()
 lexer = Lexer()
 
-environment = AST.builtins
+environment = prelude.builtins
 
 def evaluate(source, debug=True):
     source = source.strip()
@@ -19,7 +20,7 @@ def evaluate(source, debug=True):
         print(repr(ast))
         print()
     res = ast.evaluate(environment)
-    print(">", res)
+    print(">", str(res))
 
 
 if __name__ == "__main__":
