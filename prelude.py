@@ -1,7 +1,7 @@
 from functools import reduce
 from operator import add, mul, eq
 
-from AST import Symbol, Number, Bool, Keyword, SExpression
+from AST import Symbol, Number, Keyword, SExpression
 from proc import Procedure
 from env import Env
 from builtin import BuiltIn

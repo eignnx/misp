@@ -49,10 +49,6 @@ class Keyword(Atom):
     def evaluate(self, env):
         return self
 
-class Bool(Atom):
-    def __bool__(self):
-        return self.value
-
 class Number(Atom):
     def __add__(self, other):
         return Number(self.value + other.value)
