@@ -32,11 +32,11 @@ class Parser(Parser):
 
     @_("LBRACE expressions RBRACE")
     def brace_expression(self, p):
-        return AST.SExpression(AST.Symbol("Quote"), AST.SExpression(*p.expressions))
+        return AST.SExpression(AST.Symbol("List"), *p.expressions)
 
     @_("LBRACE RBRACE")
     def brace_expression(self, p):
-        return AST.SExpression(AST.Symbol("Quote"), AST.SExpression())
+        return AST.SExpression(AST.Symbol("List"))
 
     @_("QUOTE expression")
     def quoted_expression(self, p):
