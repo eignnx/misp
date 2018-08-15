@@ -121,11 +121,11 @@ As an example, the following two expressions both return `10`:
 * `List[v1 v2 v3 ...]` or `{v1 v2 v3 ...}`
 
   * Returns the abstract syntax tree representing a list which contains the specified values
-  * Equivalent to `'(v1 v2 v3 ...)` or `Quote[(1 2 3)]`
+  * **Not** the same as `'(v1 v2 v3 ...)` or `Quote[(v1 v2 v3)]` since `List` evaluates each of its arguments `vi` *before* putting putting them in a quoted list
 
 * `If[condition e1 e2]`
 
-  * Returns the value of `e1` if `condition` is "truthy" (not `:F` or `Nil`), otherwise, returns the value of `e2`
+  * Returns the value of `e1` if `condition` is "truthy" (neither `:F` nor `Nil`), otherwise, returns the value of `e2`
 
 * `Print[v1 v2 v3 ... vn]`
 
