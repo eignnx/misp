@@ -1,4 +1,3 @@
-from functools import reduce
 from env import Env
 from decimal import Decimal
 
