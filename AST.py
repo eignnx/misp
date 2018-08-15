@@ -84,7 +84,7 @@ class SExpression(Expression):
         self.values = values
 
     def __str__(self):
-        return "'({})".format(" ".join(str(v) for v in self.values))
+        return "{{{}}}".format(" ".join(str(v) for v in self.values))
 
     def __repr__(self):
         return self.tree_repr()
@@ -134,5 +134,6 @@ class SExpression(Expression):
             return head.apply(body, env)
 
         else:
-            return self
+            msg = f"Un-callable head of expression: {head}"
+            raise TypeError(msg)
 
