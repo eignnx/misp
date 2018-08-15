@@ -148,6 +148,26 @@ def let(args, env):
     return proc.apply(vals)
 
 @builtin
+@procedure
+@arity(1)
+def eval_(args, env):
+    [expr] = args
+    return expr.evaluate(env)
+
+@builtin
+@procedure
+@arity(2)
+def apply_(args, env):
+    fn, args = args
+
+    if type(fn) is Procedure:
+        return fn.apply(args)
+    if type(fn) is BuiltIn:
+        return fn.apply(args, env)
+    else:
+        raise Exception("First argument to `Apply` must evaluate to a callable type")
+
+@builtin
 @arity(1)
 def quote(args, env):
     return args[0]
@@ -246,6 +266,8 @@ builtins = Env(locals_={
     Symbol("Set!"):  set_bang,
     Symbol("Do"):    do,
     Symbol("Let"):   let,
+    Symbol("Eval"):  eval_,
+    Symbol("Apply"):  apply_,
     Symbol("Quote"): quote,
     Symbol("List"):  list_,
     Symbol("If"):    if_,
