@@ -20,8 +20,11 @@ def evaluate(source, debug=True):
             print()
             print(repr(ast))
             print()
-        res = ast.evaluate(environment)
-        print("-->", str(res))
+        try:
+            res = ast.evaluate(environment)
+            print("-->", str(res))
+        except Exception as e:
+            print("ERROR:", str(e))
 
 
 if __name__ == "__main__":
