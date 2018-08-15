@@ -116,7 +116,6 @@ class SExpression(Expression):
     def evaluate(self, env):
 
         head, *body = self.values
-        body = SExpression(*body)
 
         if isinstance(head, Symbol):
             res = head.evaluate(env)
@@ -127,13 +126,13 @@ class SExpression(Expression):
             return SExpression(res, *body).evaluate(env)
 
         elif type(head) is Procedure:
-            args = body.evaluate(env)
+            args = [arg.evaluate(env) for arg in body]
             return head.apply(args)
 
         elif type(head) is BuiltIn:
             return head.apply(body, env)
 
         else:
-            msg = f"Un-callable head of expression: {head}"
+            msg = f"Un-callable S-expression head: {head}"
             raise TypeError(msg)
 
