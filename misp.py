@@ -14,17 +14,21 @@ environment = prelude.builtins
 
 def evaluate(source, debug=True):
     source = source.strip()
-    ast = parser.parse(lexer.tokenize(source))
-    if debug:
-        print()
-        print(repr(ast))
-        print()
-    res = ast.evaluate(environment)
-    print(">", str(res))
+    ast_list = parser.parse(lexer.tokenize(source))
+    for ast in ast_list:
+        if debug:
+            print()
+            print(repr(ast))
+            print()
+        res = ast.evaluate(environment)
+        print("-->", str(res))
 
 
 if __name__ == "__main__":
-    argparser = ap.ArgumentParser(prog="misp", description="Executes misp code")
+    argparser = ap.ArgumentParser(
+        prog="misp",
+        description="Executes misp code"
+    )
     argparser.add_argument("filename", nargs="?")
     argparser.add_argument(
         "-a", "--ast", action="store_true",
@@ -44,5 +48,10 @@ if __name__ == "__main__":
 
     if args.interactive or args.filename is None:
         while True:
-            source = input("::> ")
-            evaluate(source, args.ast)
+            try:
+                source = input("::> ")
+            except EOFError:
+                print("\nExiting...")
+                break
+            if source:
+                evaluate(source, args.ast)

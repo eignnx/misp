@@ -3,7 +3,7 @@ from decimal import Decimal
 
 class Lexer(Lexer):
     tokens = {
-        SEP, PIPE, NAME,
+        PIPE, NAME, KEYWORD,
         NUM, STR,
         QUOTE,
         LPAREN, RPAREN,
@@ -11,9 +11,10 @@ class Lexer(Lexer):
         LBRACE, RBRACE
     }
     
-    SEP = r"\s+"
+    ignore = " \t\n\r"
     PIPE = r"\|\|"
     NAME = r"[a-zA-Z\-+*\/=<>][a-zA-Z0-9_\-=<>]*['!?]*"
+    KEYWORD = r":" + NAME
     
     NUM = r"[\-]?\d+\.?\d*|\.\d+"
     STR = r'("[^"]*")'
@@ -42,4 +43,7 @@ if __name__ == "__main__":
     def lexit(txt):
         for tok in lex.tokenize(txt):
             print(tok)
+
+    source = input("::> ")
+    lexit(source)
 

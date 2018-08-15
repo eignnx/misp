@@ -1,0 +1,6 @@
+Defn[fib[n]
+    If[Or[=[n 0] =[n 1]]
+       n
+       +[fib[Dec[n]] fib[-[n 2]]]]]
+
+

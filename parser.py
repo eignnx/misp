@@ -5,29 +5,34 @@ import AST
 class Parser(Parser):
     tokens = Lexer.tokens
 
-    @_("expression")
+#    @_("expression")
+#    def program(self, p):
+#        return p.expression
+
+    @_("expressions")
     def program(self, p):
-        return p.expression
+        return p.expressions
     
-    @_("LPAREN args RPAREN")
+    @_("LPAREN expressions RPAREN")
     def paren_expression(self, p):
-        return AST.SExpression(*p.args)
+        return AST.SExpression(*p.expressions)
 
     @_("LPAREN RPAREN")
     def paren_expression(self, p):
         return AST.SExpression()
 
-    @_("expression LBRACK args RBRACK",
-       "LBRACK args PIPE expression RBRACK",
-       "LBRACK args SEP PIPE expression RBRACK",
-       "LBRACK args PIPE SEP expression RBRACK",
-       "LBRACK args SEP PIPE SEP expression RBRACK")
+    @_("expression LBRACK RBRACK")
     def brack_expression(self, p):
-        return AST.SExpression(p.expression, *p.args)
+        return AST.SExpression(p.expression)
 
-    @_("LBRACE args RBRACE")
+    @_("expression LBRACK expressions RBRACK",
+       "LBRACK expressions PIPE expression RBRACK")
+    def brack_expression(self, p):
+        return AST.SExpression(p.expression, *p.expressions)
+
+    @_("LBRACE expressions RBRACE")
     def brace_expression(self, p):
-        return AST.SExpression(AST.Symbol("Quote"), AST.SExpression(*p.args))
+        return AST.SExpression(AST.Symbol("Quote"), AST.SExpression(*p.expressions))
 
     @_("LBRACE RBRACE")
     def brace_expression(self, p):
@@ -35,14 +40,14 @@ class Parser(Parser):
 
     @_("QUOTE expression")
     def quoted_expression(self, p):
-        return AST.SExpression(AST.Symbol("Quote"), *p.expression)
+        return AST.SExpression(AST.Symbol("Quote"), p.expression)
 
-    @_("args SEP expression")
-    def args(self, p):
-        return p.args + [p.expression]
+    @_("expressions expression")
+    def expressions(self, p):
+        return p.expressions + [p.expression]
 
     @_("expression")
-    def args(self, p):
+    def expressions(self, p):
         return [p.expression]
 
     @_("NUM")
@@ -56,6 +61,10 @@ class Parser(Parser):
     @_("STR")
     def expression(self, p):
         return AST.String(p.STR)
+
+    @_("KEYWORD")
+    def expression(self, p):
+        return AST.Keyword(p.KEYWORD)
     
     @_("brack_expression")
     def expression(self, p):
