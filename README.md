@@ -51,7 +51,6 @@ As an example, the following two expressions both return `10`:
 * **Truthiness**
   * `:F`
     * A keyword representing the boolean false value
-    * `:T` is 
   * `Nil`
     * A symbol bound to the empty list
     * Is also considered false
