@@ -114,6 +114,16 @@ As an example, the following two expressions both return `10`:
   * The variable bindings are only valid during the execution of `body`
   * Equivalent to the immediately invoked lambda expression: `Fn[{x y ...} body][v1 v2 ...]`
 
+* `Eval[expr]`
+
+  * Evaluates a quoted expression
+  * `Eval[{+ 1 2 3}]` and `Eval['(+ 1 2 3)]` both return `6`
+
+* `Apply[f {arg1 arg2 arg3 ...}]`
+
+  * Applies the callable function bound to `f` upon the argument list
+  * Eqivalent to `f[arg1 arg2 arg3 ...]`
+
 * `Quote[expression]` or `'expression`
 
   * Returns `expression` , unevaluated, as an abstract syntax tree
