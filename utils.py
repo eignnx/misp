@@ -1,10 +1,23 @@
-from AST import SExpression, BuiltIn, Keyword, Expression, Number
+from AST import SExpression, BuiltIn, Keyword, Expression, Number, Symbol
+from env import Env
 
 from functools import wraps
 
+FLAG = "misp_intermediate_fn"
 
 def builtin(f):
-    return BuiltIn(f)
+    named = FLAG in f.__dict__.keys()
+    return BuiltIn(f, name=f.__name__ if named else None)
+
+def named(name):
+    """
+    Changes the name of the decorated function
+    """
+    def decorated_fn(f):
+        f.__name__ = name
+        f.__dict__[FLAG] = True
+        return f
+    return decorated_fn
 
 def procedure(f):
     @wraps(f)
@@ -18,13 +31,15 @@ def arity(argc, ellipsis=None):
         @wraps(f)
         def wrapper(args, env):
 
+            lt = len(args) < argc
             gt = len(args) > argc
             eq = len(args) == argc
 
-            addendum = "at least" if gt and ellipsis is ... else ""
-            msg = f"Wrong number of arguments. Expected {addendum}" + \
-                  f"{argc}, got {len(args)}"
-            assert eq or (ellipsis is ... and gt), msg
+            if not eq and (ellipsis is not ... or not gt):
+                addendum = "at least " if lt and ellipsis is ... else ""
+                msg = f"Wrong number of arguments to `{f.__name__}`. " + \
+                      f"Expected {addendum}{argc}, got {len(args)}"
+                raise AssertionError(msg)
 
             return f(args, env)
         return wrapper
@@ -40,8 +55,10 @@ def number_map(f):
     @wraps(f)
     def wrapper(args, env):
         numbers = args
-        msg = f"Arguments must all be numbers: {numbers}"
-        assert all(type(n) is Number for n in numbers), msg
+
+        if any(type(n) is not Number for n in numbers):
+            msg = f"Arguments to `{f.__name__}` must all be numbers: {numbers}"
+            raise AssertionError(msg)
 
         numbers = [n.value for n in numbers]
         py_num = f(numbers, env)
@@ -66,3 +83,7 @@ def expr_into_kwbool(e: Expression) -> Keyword:
     else:
         return Keyword(":F")
 
+
+def collect_builtins(locs):
+    builtins = { Symbol(b.name): b for b in locs.values() if type(b) is BuiltIn }
+    return Env(parent=None, locals_=builtins)

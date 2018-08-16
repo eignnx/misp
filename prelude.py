@@ -17,47 +17,55 @@ def all_type(seq, typ):
 @builtin
 @procedure
 @arity(2, ...)
+@named("+")
 def plus(args, env):
     return reduce(add, args)
 
 @builtin
 @procedure
 @arity(2, ...)
+@named("-")
 def minus(args, env):
     return args[0] - reduce(add, args[1:])
 
 @builtin
 @procedure
 @arity(2, ...)
+@named("*")
 def times(args, env):
     return reduce(mul, args)
 
 @builtin
 @procedure
 @arity(2, ...)
+@named("/")
 def divide(args, env):
     return args[0] / reduce(mul, args[1:])
 
 @builtin
 @procedure
 @arity(2, ...)
+@named("=")
 def all_eq(args, env):
     return pybool_into_kwbool(reduce(eq, args))
 
 @builtin
 @procedure
 @arity(1)
+@named("Head")
 def head(args, env):
     return args[0].head()
 
 @builtin
 @procedure
 @arity(1)
+@named("Body")
 def body(args, env):
     return SExpression(*args[0].body())
 
 @builtin
 @arity(2)
+@named("Fn")
 def fn(args, env):
     """
     Fn[{x y z} +[x y z]]
@@ -65,13 +73,14 @@ def fn(args, env):
 
     [quote, params], body = args
 
-    msg = "First argument must be a list of symbols"
+    msg = "First argument to `Fn` must be a list of symbols"
     assert type(params) is SExpression and all_type(params, Symbol), msg
 
     return Procedure(formals=params, body=body, creation_env=env)
 
 @builtin
 @arity(2)
+@named("Def")
 def define(args, env):
 
     sym, val = args
@@ -86,6 +95,7 @@ def define(args, env):
 
 @builtin
 @arity(2)
+@named("Defn")
 def defn(args, env):
     """
     Defn[f[x] x]
@@ -109,6 +119,7 @@ def defn(args, env):
 
 @builtin
 @arity(2)
+@named("Set!")
 def set_bang(args, env):
     sym, val = args
     val = val.evaluate(env)
@@ -117,6 +128,7 @@ def set_bang(args, env):
 
 @builtin
 @arity(1, ...)
+@named("Do")
 def do(args, env):
     for arg in args[:-1]:
         arg.evaluate(env)
@@ -124,6 +136,7 @@ def do(args, env):
 
 @builtin
 @arity(2)
+@named("Let")
 def let(args, env):
     """
     Let[{x 12
@@ -150,6 +163,7 @@ def let(args, env):
 @builtin
 @procedure
 @arity(1)
+@named("Eval")
 def eval_(args, env):
     [expr] = args
     return expr.evaluate(env)
@@ -157,6 +171,7 @@ def eval_(args, env):
 @builtin
 @procedure
 @arity(2)
+@named("Apply")
 def apply_(args, env):
     fn, args = args
 
@@ -169,19 +184,21 @@ def apply_(args, env):
 
 @builtin
 @arity(1)
+@named("Quote")
 def quote(args, env):
     return args[0]
 
 @builtin
 @procedure
 @arity(0, ...)
+@named("List")
 def list_(args, env):
     return SExpression(*args)
 
 @builtin
 @arity(3)
+@named("If")
 def if_(args, env):
-    assert len(args) == 3, f"`If` takes 3 arguments, {len(args)} given"
     condition, consequent, alternative = args
     if truthy(condition.evaluate(env)):
         return consequent.evaluate(env)
@@ -189,7 +206,8 @@ def if_(args, env):
         return alternative.evaluate(env)
 
 @builtin
-@arity(0, ...)
+@arity(1, ...)
+@named("Or")
 def or_(args, env):
     for arg in args:
         arg = arg.evaluate(env)
@@ -199,7 +217,8 @@ def or_(args, env):
         return Keyword(":F")
 
 @builtin
-@arity(0, ...)
+@arity(1, ...)
+@named("And")
 def and_(args, env):
     for arg in args[:-1]:
         arg = arg.evaluate(env)
@@ -211,6 +230,7 @@ def and_(args, env):
 @builtin
 @procedure
 @arity(1)
+@named("Not")
 def not_(args, env):
     [a] = args
     return pybool_into_kwbool(not truthy(a))
@@ -218,6 +238,7 @@ def not_(args, env):
 @builtin
 @procedure
 @arity(0, ...)
+@named("Print")
 def print_(args, env):
     if args:
         for arg in args:
@@ -230,6 +251,7 @@ def print_(args, env):
 @builtin
 @procedure
 @arity(1)
+@named("Type")
 def type_(args, env): ######### TODO: How to represent types?
     [arg] = args
     return Keyword(":" + type(arg).__name__)
@@ -239,6 +261,7 @@ def type_(args, env): ######### TODO: How to represent types?
 @procedure
 @arity(1)
 @number_map
+@named("Inc")
 def inc(args, env):
     [n] = args
     return n + 1
@@ -247,36 +270,11 @@ def inc(args, env):
 @procedure
 @arity(1)
 @number_map
+@named("Dec")
 def dec(args, env):
     [n] = args
     return n - 1
 
-builtins = Env(locals_={
-    Symbol("Nil"):   nil,
-    Symbol("+"):     plus,
-    Symbol("-"):     minus,
-    Symbol("*"):     times,
-    Symbol("/"):     divide,
-    Symbol("="):     all_eq,
-    Symbol("Head"):  head,
-    Symbol("Body"):  body,
-    Symbol("Fn"):    fn,
-    Symbol("Def"):   define,
-    Symbol("Defn"):  defn,
-    Symbol("Set!"):  set_bang,
-    Symbol("Do"):    do,
-    Symbol("Let"):   let,
-    Symbol("Eval"):  eval_,
-    Symbol("Apply"):  apply_,
-    Symbol("Quote"): quote,
-    Symbol("List"):  list_,
-    Symbol("If"):    if_,
-    Symbol("Or"):    or_,
-    Symbol("And"):   and_,
-    Symbol("Not"):   not_,
-    Symbol("Print"): print_,
-    Symbol("Type"):  type_,
-    Symbol("Inc"):   inc,
-    Symbol("Dec"):   dec,
-})
+builtins = collect_builtins(locals())
+builtins.locals[Symbol("Nil")] = nil
 
