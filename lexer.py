@@ -5,7 +5,7 @@ class Lexer(Lexer):
     tokens = {
         PIPE, NAME, KEYWORD,
         NUM, STR,
-        QUOTE,
+        QUOTE, QUASIQUOTE, UNQUOTE,
         LPAREN, RPAREN,
         LBRACK, RBRACK,
         LBRACE, RBRACE
@@ -20,6 +20,8 @@ class Lexer(Lexer):
     STR = r'("[^"]*")'
 
     QUOTE = r"'"
+    QUASIQUOTE = r"~"
+    UNQUOTE = r"\$"
 
     LPAREN = r"\("
     RPAREN = r"\)"

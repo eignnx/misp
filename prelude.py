@@ -1,7 +1,7 @@
 from functools import reduce
 from operator import add, mul, eq
 
-from AST import Symbol, Number, Keyword, SExpression
+from AST import *
 from proc import Procedure
 from env import Env
 from builtin import BuiltIn
@@ -187,6 +187,38 @@ def apply_(args, env):
 @named("Quote")
 def quote(args, env):
     return args[0]
+
+@builtin
+@arity(1)
+@named("Quasiquote")
+def quasiquote(args, env):
+    [expr] = args
+    
+    def recurse(e) -> Expression:
+        if type(e) is SExpression:
+            head, *body = e
+            if head == Symbol("Unquote"):
+                [unquoted] = body
+                return unquoted.evaluate(env)
+            elif head == Symbol("Quasiquote"):
+                return e # Don't recurse inside nested quasiquote expressions
+            else:
+                return SExpression(*(recurse(ei) for ei in e))
+        elif isinstance(e, Atom):
+            return e
+        else:
+            raise Exception("Unreachable!")
+
+    return recurse(expr)
+
+
+@builtin
+@arity(1)
+@named("Unquote")
+def unquote(args, env):
+    msg = "`Unquote` cannot be evaluated! It should only be used inside " + \
+          "of `Quasiquote` or macros"
+    raise Exception(msg)
 
 @builtin
 @procedure

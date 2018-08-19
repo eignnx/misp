@@ -4,7 +4,6 @@ import argparse as ap
 
 from parser import Parser
 from lexer import Lexer
-import AST
 import prelude
 
 parser = Parser()

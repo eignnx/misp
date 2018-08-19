@@ -42,6 +42,14 @@ class Parser(Parser):
     def quoted_expression(self, p):
         return AST.SExpression(AST.Symbol("Quote"), p.expression)
 
+    @_("QUASIQUOTE expression")
+    def quoted_expression(self, p):
+        return AST.SExpression(AST.Symbol("Quasiquote"), p.expression)
+
+    @_("UNQUOTE expression")
+    def quoted_expression(self, p):
+        return AST.SExpression(AST.Symbol("Unquote"), p.expression)
+
     @_("expressions expression")
     def expressions(self, p):
         return p.expressions + [p.expression]
