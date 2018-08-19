@@ -133,6 +133,16 @@ As an example, the following two expressions both return `10`:
   * Returns the abstract syntax tree representing a list which contains the specified values
   * **Not** the same as `'(v1 v2 v3 ...)` or `Quote[(v1 v2 v3)]` since `List` evaluates each of its arguments `vi` *before* putting putting them in a quoted list
 
+* `Quasiquote[expression]` or `~expression`
+
+  * Returns `expression` with every instance of `Unquote[subexpression]` replaced with the value of `subexpression`
+  * Note: A quasiquoted expression -- in general -- evaluates to an abstract syntax tree
+
+* `Unquote[expression]` or `$expression`
+
+  * Cannot be evaluated outside of a quasiquote expression
+  * When inside of a quasiquote expression, `Unquote[expression]` will be replaced with the value `expression` evaluates to
+
 * `If[condition e1 e2]`
 
   * Returns the value of `e1` if `condition` is "truthy" (neither `:F` nor `Nil`), otherwise, returns the value of `e2`
