@@ -36,10 +36,10 @@ class Env:
 
 class EmptyDict:
     def __getitem__(self, name):
-        raise KeyError("Unbound variable '{}'".format(name))
+        raise KeyError(f"Unbound symbol '{name}'")
 
     def __setitem__(self, name, value):
-        raise KeyError("Unbound variable '{}'".format(name))
+        raise KeyError(f"Unbound symbol '{name}'")
 
     def __contains__(self, name):
         return False
